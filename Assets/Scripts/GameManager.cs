@@ -1,13 +1,21 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using TMPro;
 
 public class GameManager : MonoBehaviour
 {
 
 
-    [SerializeField] private TileBoard board;
+	private const string HISCORE = "hiscore";
+
+
+	[SerializeField] private TileBoard board;
 	[SerializeField] private CanvasGroup gameOver;
+	[SerializeField] private TextMeshProUGUI scoreText;
+	[SerializeField] private TextMeshProUGUI hiscoreText;
+
+	
+	private int score = 0;
 
 	private void Start()
 	{
@@ -16,6 +24,9 @@ public class GameManager : MonoBehaviour
 
 	public void NewGame()
 	{
+		SetScore(0);
+		hiscoreText.text = LoadHiscore().ToString();
+
 		gameOver.alpha = 0f;
 		gameOver.interactable = false;
 
@@ -49,5 +60,33 @@ public class GameManager : MonoBehaviour
 		}
 
 		canvasGroup.alpha = to;
+	}
+
+	public void IncreaseScore(int points)
+	{
+		SetScore(score + points);
+	}
+
+	private void SetScore(int score)
+	{
+		this.score = score;
+		scoreText.text = score.ToString();
+
+		SaveHiscore();
+	}
+
+	private void SaveHiscore()
+	{
+		int hiscore = LoadHiscore();
+
+		if (score > hiscore)
+		{
+			PlayerPrefs.SetInt(HISCORE, score);
+		}
+	}
+
+	private int LoadHiscore()
+	{
+		return PlayerPrefs.GetInt(HISCORE, 0);
 	}
 }
